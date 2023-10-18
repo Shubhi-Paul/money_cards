@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:money_cards/constants/colors.dart';
 
 class BusinessCard extends StatefulWidget {
@@ -27,19 +26,29 @@ class _BusinessCardState extends State<BusinessCard> {
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Container(
-              color: bgLighter,
+              // color: bgLighter,
               height: 80,
               width: 120,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  "./assets/business-card.jpg",
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Shubhi Paul",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textDark),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(
+                        "Shubhi Paul",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: textDark),
+                      ),
                     ),
                     Text(
                       "Sub Space",
@@ -57,8 +66,10 @@ class _BusinessCardState extends State<BusinessCard> {
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios,
-            color: textLight,)
+            Icon(
+              Icons.arrow_forward_ios,
+              color: textLight,
+            )
           ]),
         ));
   }

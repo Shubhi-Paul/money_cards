@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:money_cards/constants/colors.dart';
+import 'package:money_cards/view/screens/text_extractor.dart';
 import 'package:money_cards/view/widgets/business_card.dart';
+import 'package:money_cards/constants/colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,17 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: const BoxDecoration(
                   color: bgDark,
                   borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-                   boxShadow: [
-                 BoxShadow(
-                  color: Colors.black38,
-                  offset: Offset(
-                    3.0,
-                    2.0,
-                  ),
-                  blurRadius: 3.0,
-                  spreadRadius: 2.0,
-                ), 
-              ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black38,
+                      offset: Offset(
+                        3.0,
+                        2.0,
+                      ),
+                      blurRadius: 3.0,
+                      spreadRadius: 2.0,
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
@@ -65,7 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    Container(margin: EdgeInsets.symmetric(horizontal: 8), child: Icon(Icons.menu, color: bgLighter,))
+                    Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(
+                          Icons.menu,
+                          color: bgLighter,
+                        ))
                   ],
                 ),
               ),
@@ -73,10 +80,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  itemCount: 10,
-                  itemBuilder: (context,index){
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
                     return BusinessCard();
                   },
+                ),
+              ),
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => TextRecognizerView()));
+                },
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: bgLight,
+                    borderRadius: BorderRadius.circular(24)
+                  ),
+                  child: Text("Detect Text",
+                  style: TextStyle(fontSize: 14,fontWeight: FontWeight.w800,color: textLight),),
                 ),
               )
             ],
