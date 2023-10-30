@@ -47,3 +47,4 @@ lib/view/screens/later/menu_page.dart
 lib/module/image_process.dart
 lib/module/text_extractions.dart
 lib/view/screens/later/settings_page.dart
+pubspec.lock

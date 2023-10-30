@@ -5,7 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money_cards/constants/colors.dart';
-
+import 'package:money_cards/view/screens/hive_utils.dart';
+import 'package:edge_detection/edge_detection.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'utils.dart';
 
 class GalleryView extends StatefulWidget {
@@ -40,30 +43,6 @@ class _GalleryViewState extends State<GalleryView> {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // Scaffold(
-        //   backgroundColor: bgDark,
-        //     appBar: AppBar(
-        //       title: Text(widget.title),
-        //       // actions: [
-        //       //   Padding(
-        //       //     padding: EdgeInsets.only(right: 20.0),
-        //       //     child: GestureDetector(
-        //       //       onTap: widget.onDetectorViewModeChanged,
-        //       //       child: Icon(
-        //       //         Platform.isIOS ? Icons.camera_alt_outlined : Icons.camera,
-        //       //       ),
-        //       //     ),
-        //       //   ),
-        //       // ],
-        //     ),
-        //     body:
-        _galleryBody()
-        // )
-        ;
-  }
-
-  Widget _galleryBody() {
     return ListView(shrinkWrap: true, children: [
       _image != null
           ? SizedBox(
@@ -92,6 +71,14 @@ class _GalleryViewState extends State<GalleryView> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: ElevatedButton(
+            onPressed: () => saveData(widget.text),
+            child: Text('Save to hive'),
+          ),
+        ),
+      if (_image != null)
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: ElevatedButton(
             onPressed: () {
               setState(() {
                 _image = null;
@@ -101,33 +88,51 @@ class _GalleryViewState extends State<GalleryView> {
             child: Text('Retake'),
           ),
         ),
-  
       if (_image == null)
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: ElevatedButton(
-            onPressed:() => _getImageAsset(),
-            child: Text('From Assets'),
-          ),
-        ),
-      if (_image == null)
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: ElevatedButton(
-            child: Text('From Gallery'),
-            onPressed: () => _getImage(ImageSource.gallery),
-          ),
-        ),
-      if (_image == null)
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: ElevatedButton(
-            child: Text('Take a picture'),
-            onPressed: () => _getImage(ImageSource.camera),
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                onPressed: () => _getImageAsset(context),
+                child: Text('From Assets'),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                child: Text('From Gallery'),
+                onPressed: () => _getImage(ImageSource.gallery),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: ElevatedButton(
+                child: Text('Take a picture'),
+                onPressed: () => _getImage(ImageSource.camera),
+              ),
+            ),
+          ],
         ),
     ]);
   }
+
+//   Future _getImageGallery(ImageSource source) async {
+//     try {
+//     String imagePath = join((await getApplicationSupportDirectory()).path,
+//     "${(DateTime.now().millisecondsSinceEpoch / 1000).round()}.jpeg");
+//     //Make sure to await the call to detectEdgeFromGallery.
+//     bool success = await EdgeDetection.detectEdgeFromGallery(imagePath,
+//         androidCropTitle: 'Crop', // use custom localizations for android
+//         androidCropBlackWhiteTitle: 'Black White',
+//         androidCropReset: 'Reset',
+//     );
+// } catch (e) {
+//     print(e);
+// }
+
+  // }
 
   Future _getImage(ImageSource source) async {
     setState(() {
@@ -140,7 +145,7 @@ class _GalleryViewState extends State<GalleryView> {
     }
   }
 
-  Future _getImageAsset() async {
+  Future _getImageAsset(BuildContext context) async {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
     final assets = manifestMap.keys
@@ -161,7 +166,7 @@ class _GalleryViewState extends State<GalleryView> {
                 children: [
                   Text(
                     'Select image',
-                    style: TextStyle(fontSize: 20,color: textLight),
+                    style: TextStyle(fontSize: 20, color: textLight),
                   ),
                   ConstrainedBox(
                     constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
