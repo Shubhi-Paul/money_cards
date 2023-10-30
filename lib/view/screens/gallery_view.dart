@@ -6,9 +6,7 @@ import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money_cards/constants/colors.dart';
 import 'package:money_cards/view/screens/hive_utils.dart';
-import 'package:edge_detection/edge_detection.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 import 'utils.dart';
 
 class GalleryView extends StatefulWidget {
@@ -16,12 +14,14 @@ class GalleryView extends StatefulWidget {
     Key? key,
     // required this.title,
     this.text,
+    this.entities,
     required this.onImage,
     // required this.onDetectorViewModeChanged
   }) : super(key: key);
 
   // final String title;
   final String? text;
+  final List<EntityAnnotation>? entities;
   final Function(InputImage inputImage) onImage;
   // final Function()? onDetectorViewModeChanged;
 
@@ -59,6 +59,15 @@ class _GalleryViewState extends State<GalleryView> {
               Icons.image,
               size: 200,
             ),
+      if (_image != null)
+        ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: widget.entities!.length,
+          itemBuilder: (context, index) =>
+              ExpansionTile(title: Text(widget.entities![index].text), children: widget.entities![index].entities.map((e) => Text(e.toString())).toList()),
+        ),
       if (_image != null)
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -117,22 +126,6 @@ class _GalleryViewState extends State<GalleryView> {
         ),
     ]);
   }
-
-//   Future _getImageGallery(ImageSource source) async {
-//     try {
-//     String imagePath = join((await getApplicationSupportDirectory()).path,
-//     "${(DateTime.now().millisecondsSinceEpoch / 1000).round()}.jpeg");
-//     //Make sure to await the call to detectEdgeFromGallery.
-//     bool success = await EdgeDetection.detectEdgeFromGallery(imagePath,
-//         androidCropTitle: 'Crop', // use custom localizations for android
-//         androidCropBlackWhiteTitle: 'Black White',
-//         androidCropReset: 'Reset',
-//     );
-// } catch (e) {
-//     print(e);
-// }
-
-  // }
 
   Future _getImage(ImageSource source) async {
     setState(() {

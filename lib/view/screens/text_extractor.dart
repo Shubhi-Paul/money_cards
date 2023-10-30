@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 import 'package:money_cards/constants/colors.dart';
 import 'package:money_cards/view/screens/gallery_view.dart';
 
@@ -16,7 +17,9 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
   bool _canProcess = true;
   bool _isBusy = false;
   String? _text;
-  var _cameraLensDirection = CameraLensDirection.back;
+   var _entities = <EntityAnnotation>[];
+   final _entityExtractor =
+      EntityExtractor(language: EntityExtractorLanguage.english);
 
   @override
   void dispose() async {
@@ -46,6 +49,7 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
       ),
       body: GalleryView(
         text: _text,
+        entities: _entities,
         onImage: _processImage,
       ),
     );
@@ -86,10 +90,19 @@ class _TextRecognizerViewState extends State<TextRecognizerView> {
       _text = '';
     });
     final recognizedText = await _textRecognizer.processImage(inputImage);
-      _text = recognizedText.text;
+    _text = recognizedText.text;
+    _extractEntities(recognizedText.text);
     _isBusy = false;
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Future<void> _extractEntities(String text) async {
+    FocusScope.of(context).unfocus();
+    final result = await _entityExtractor.annotateText(text);
+    setState(() {
+      _entities = result;
+    });
   }
 }
